@@ -28,7 +28,7 @@ var TemplateDialog = {
         }
 
         for (x=0; x<tsrc.length; x++)
-            sel.options[sel.options.length] = new Option(tsrc[x].title, tinyMCEPopup.editor.documentBaseURI.toAbsolute(tsrc[x].src));
+            sel.options[sel.options.length] = new Option(tsrc[x].title, tsrc[x].src);
 
         this.resize();
         this.tsrc = tsrc;
@@ -62,12 +62,12 @@ var TemplateDialog = {
     },
 
     selectTemplate : function(u, ti) {
-        var d = window.frames['templatesrc'].document, x, tsrc = this.tsrc;
+        var d = document.getElementById('templatesrc'), x, tsrc = this.tsrc;
 
         if (!u)
             return;
 
-        d.body.innerHTML = this.templateHTML = this.getFileContents(u);
+        d.innerHTML = this.templateHTML = u;
 
         for (x=0; x<tsrc.length; x++) {
             if (tsrc[x].title == ti)
@@ -82,30 +82,6 @@ var TemplateDialog = {
         });
 
         tinyMCEPopup.close();
-    },
-
-    getFileContents : function(u) {
-        var x, d, t = 'text/plain';
-
-        function g(s) {
-            x = 0;
-
-            try {
-                x = new ActiveXObject(s);
-            } catch (s) {
-            }
-
-            return x;
-        };
-
-        x = window.ActiveXObject ? g('Msxml2.XMLHTTP') || g('Microsoft.XMLHTTP') : new XMLHttpRequest();
-
-        // Synchronous AJAX load file
-        x.overrideMimeType && x.overrideMimeType(t);
-        x.open("GET", u, false);
-        x.send(null);
-
-        return x.responseText;
     }
 };
 

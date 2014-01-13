@@ -8,10 +8,6 @@ from zope.publisher.browser import BrowserView
 
 from plone.registry.interfaces import IRegistry
 
-try:
-    from Products.ATContentTypes.interfaces.document import IATDocument
-except:
-    from Products.ATContentTypes.interface import IATDocument
 from Products.CMFCore.utils import getToolByName
 
 class TemplateList(BrowserView):
@@ -37,7 +33,8 @@ class TemplateList(BrowserView):
                         p = p[1:]
                     paths.append("%s/%s" % (portal_path, p,))
                 
-                for r in portal_catalog(path=paths, object_provides=IATDocument.__identifier__):
-                    templates.append([r.Title, "%s/getText" % r.getURL(), r.Description])
+                for r in portal_catalog(path=paths, portal_type="Document"):
+                    item = r.getObject()
+                    templates.append([r.Title, item.getText() if hasattr(item, 'getText') else item.text.output, r.Description])
         
         return u"var tinyMCETemplateList = %s;" % json.dumps(templates)
